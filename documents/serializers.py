@@ -38,6 +38,15 @@ class DocumentGetSerializer(serializers.ModelSerializer):
         # Check if the request user is the owner of the document
         if instance.owner == request_user:
             # If the request user is the owner, return all fields
+            if data['shared_with']:
+                shared_data = data['shared_with']
+                for i, shared in enumerate(shared_data):
+                    obj = DocumentPermission.objects.filter(document=instance, user_id=shared.get('id')).first()
+                    # updating the can_edit and can_view with saved object. 
+                    # I don't need to do this if this gives the current result but it doesn't
+                    # I can't find why it produce this result
+                    shared["can_edit"] = obj.can_edit
+                    shared["can_view"] = obj.can_view
             return data
         else:
             # if the document owner isn't the request.user remove extra permission from this object except request.user
@@ -52,6 +61,7 @@ class DocumentGetSerializer(serializers.ModelSerializer):
                     else:
                         # updating the can_edit and can_view with saved object. 
                         # I don't need to do this if this gives the current result but it doesn't
+                        # I can't find why it produce this result
                         shared["can_edit"] = obj.can_edit
                         shared["can_view"] = obj.can_view
             return data

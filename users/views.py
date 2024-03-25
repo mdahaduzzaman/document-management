@@ -9,6 +9,10 @@ from django.conf import settings
 
 from .serializers import *
 
+@api_view(['GET'])
+def home(request):
+    return Response({"message": "Server is up and running"}, status=status.HTTP_200_OK)
+
 @api_view(["POST"])
 def user_registration(request):
     """creating new user"""
