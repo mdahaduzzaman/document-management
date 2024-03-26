@@ -1,19 +1,22 @@
 from datetime import datetime
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework_simplejwt.views import TokenRefreshView, TokenObtainPairView
+from .throttlings import HundredPerDayThrottle
 
 from django.conf import settings
 
 from .serializers import *
 
 @api_view(['GET'])
+@throttle_classes([HundredPerDayThrottle])
 def home(request):
     return Response({"message": "Server is up and running"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@throttle_classes([HundredPerDayThrottle])
 def user_registration(request):
     """creating new user"""
     if request.method == "POST":
@@ -28,6 +31,7 @@ def user_registration(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CustomTokenObtainPairView(TokenObtainPairView):
+    throttle_classes = [HundredPerDayThrottle]
     def post(self, request, *args, **kwargs):
         """This is the simple login view expect email password and send the token"""
         response = super().post(request, *args, **kwargs)
@@ -41,6 +45,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         return response
 
 class CustomTokenRefreshView(TokenRefreshView):
+    throttle_classes = [HundredPerDayThrottle]
     def post(self, request, *args, **kwargs):
         """This is the simple renewel token view ask for refresh token and send new token"""
 
@@ -54,6 +59,7 @@ class CustomTokenRefreshView(TokenRefreshView):
         return response
 
 @api_view(['GET'])
+@throttle_classes([HundredPerDayThrottle])
 @permission_classes([IsAuthenticated])
 def me(request):
     user = request.user

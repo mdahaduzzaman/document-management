@@ -1,16 +1,17 @@
 from rest_framework import permissions
 from rest_framework.viewsets import ModelViewSet
-
 from django.db.models import Q
 
 from .serializers import *
 from .models import *
-from .permissions import HasDocumentObjectPermission
+
+from users.throttlings import HundredPerDayThrottle
 
 class DocumentModelViewSet(ModelViewSet):
     serializer_class = DocumentSerializer
     queryset = Document.objects.all().order_by('-id')
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = [HundredPerDayThrottle]
 
     def get_queryset(self):
         user = self.request.user
