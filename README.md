@@ -1,10 +1,11 @@
 # README
 
-Welcome to DOCUMENT MANAGEMENT
-
 # LIVE LINK
 
 ## OPEN IN YOUR BROWSER [https://documents-management.nkftcl.com/] 
+
+Welcome to DOCUMENT MANAGEMENT.
+The main goal of this project is to create a new user login this user and the logged in the user can create a document object and share this document with some other user of this current project and can provide some permission like can_view and can_edit. If the shared user have the permission to view then they can view this document object if have the permission to can edit then the user can also edit this document but can't add or delete shared user.
 
 Start by cloning the repositories:
 
